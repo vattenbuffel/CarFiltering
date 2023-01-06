@@ -7,7 +7,9 @@ from common_functions import GREEN, BLACK, WHITE, BLUE, pos_to_pix
 from Wheel import Wheel
 from polygon_math import *
 from car import Car
-
+from low_pass.low_pass import LowPass
+from collections import deque
+from measured_pos import MeasuredPos
 
 class ParkingSimulator:
 
@@ -23,16 +25,19 @@ class ParkingSimulator:
         self.car = Car()
         wheel_width = 30
         wheel_height = 10
-        self.wheel1 = Wheel(wheel_width, wheel_height,
-                            self.car.width - wheel_width / 2 - 5,
-                            -self.car.height / 2 + wheel_height / 2 + 5)
-        self.wheel2 = Wheel(wheel_width, wheel_height,
-                            self.car.width - wheel_width / 2 - 5,
-                            self.car.height / 2 - wheel_height / 2 - 5)
-        self.wheel3 = Wheel(wheel_width, wheel_height, wheel_width / 2 + 5,
-                            self.car.height / 2 - wheel_height / 2 - 5)
-        self.wheel4 = Wheel(wheel_width, wheel_height, wheel_width / 2 + 5,
-                            -self.car.height / 2 + wheel_height / 2 + 5)
+        self.wheel1 = Wheel(wheel_width, wheel_height, self.car.width - wheel_width / 2 - 5, -self.car.height / 2 + wheel_height / 2 + 5)
+        self.wheel2 = Wheel(wheel_width, wheel_height, self.car.width - wheel_width / 2 - 5, self.car.height / 2 - wheel_height / 2 - 5)
+        self.wheel3 = Wheel(wheel_width, wheel_height, wheel_width / 2 + 5, self.car.height / 2 - wheel_height / 2 - 5)
+        self.wheel4 = Wheel(wheel_width, wheel_height, wheel_width / 2 + 5, -self.car.height / 2 + wheel_height / 2 + 5)
+        self.filter = LowPass(self.car.x)
+
+        self.prev_pos = deque(maxlen=100)
+        self.filterd_pos = deque(maxlen=100)
+        self.measurement_noise_std = 10
+        self.true_pos_color = (0, 0, 0)
+        self.noisy_pos_color = (0, 0, 255)
+        self.filtered_pos_color = (0, 255, 0)
+        self.pos_save_counter = 0
 
         self.map_xs = [-350, 350, 350, 50, 50, -100, -100, -350, -350]
         self.map_ys = [-350, -350, 350, 350, 100, 100, 350, 350, -350]
@@ -62,6 +67,17 @@ class ParkingSimulator:
         self.u1, self.u2 = u1u2
         self.car.step(u1u2, self.map_xs, self.map_ys)
 
+        measurement_noise = np.random.normal(0, self.measurement_noise_std, (4,1))
+        measured_pos = MeasuredPos(self.car.x, measurement_noise, u1u2, self.true_pos_color, self.noisy_pos_color)
+        filtered_pos = self.filter.update(measured_pos.noisy_pos_get(), *u1u2)
+        filtered_pos = MeasuredPos(filtered_pos, 0, u1u2, self.filtered_pos_color, self.filtered_pos_color)
+        if self.pos_save_counter == 5:
+            self.prev_pos.append(measured_pos)
+            self.filterd_pos.append(filtered_pos)
+            self.pos_save_counter = 0
+        if u1u2 != (0,0):
+            self.pos_save_counter += 1
+
     def render(self):
         self.screen.fill(WHITE)
 
@@ -77,6 +93,7 @@ class ParkingSimulator:
         self.wheel3.draw(x_, y, theta, 0, self.screen)
         self.wheel4.draw(x_, y, theta, 0, self.screen)
         draw_lines(self.map_xs, self.map_ys, self.screen, self.width, self.height)
+        draw_pos(self.prev_pos, self.filterd_pos, self.screen, self.width, self.height)
 
         t_end = time.time()
         self.fps.update(1 / (t_end - self.t_start))
@@ -86,6 +103,27 @@ class ParkingSimulator:
 
         pygame.display.update()
 
+
+def draw_pos(prev_pos: [MeasuredPos], filtered_pos: [MeasuredPos], screen, screen_width, screen_height):
+    for p in prev_pos:
+        x = p.true_pos_get()
+        draw_circle(x[0][0], x[1][0], p.true_pos_color, p.r, screen, screen_width, screen_height)
+        # draw_arrow(measured_pos.noisy_pos_get()[:3])
+
+        x = p.noisy_pos_get()
+        draw_circle(x[0][0], x[1][0], p.noisy_pos_color, p.r, screen, screen_width, screen_height)
+        # draw_arrow(measured_pos.noisy_pos_get()[:3])
+
+    for p in filtered_pos:
+        x = p.true_pos_get()
+        draw_circle(x[0][0], x[1][0], p.true_pos_color, p.r, screen, screen_width, screen_height)
+        # draw_arrow(measured_pos.noisy_pos_get()[:3])
+
+
+
+def draw_circle(x, y, color, r, screen, screen_width, screen_height):
+    p = pos_to_pix(x, y, screen_width, screen_height)
+    pygame.draw.circle(screen, color, p, r)
 
 
 def draw_line(x0, y0, x1, y1, screen, screen_width, screen_height):

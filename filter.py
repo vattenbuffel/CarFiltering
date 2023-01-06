@@ -1,6 +1,6 @@
 class Filter:
     def __init__(self, x):
-        raise NotImplementedError()
+        self.x = x
 
-    def update(self, u1, u2):
+    def update(self, x_measurement, u1, u2):
         raise NotImplementedError()
