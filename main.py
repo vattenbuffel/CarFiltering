@@ -8,6 +8,7 @@ from Wheel import Wheel
 from polygon_math import *
 from car import Car
 from low_pass.low_pass import LowPass
+from extended_kalman.extended_kalman import EKF
 from collections import deque
 from measured_pos import MeasuredPos
 
@@ -30,7 +31,14 @@ class ParkingSimulator:
         self.wheel2 = Wheel(wheel_width, wheel_height, self.car.width - wheel_width / 2 - 5, self.car.height / 2 - wheel_height / 2 - 5)
         self.wheel3 = Wheel(wheel_width, wheel_height, wheel_width / 2 + 5, self.car.height / 2 - wheel_height / 2 - 5)
         self.wheel4 = Wheel(wheel_width, wheel_height, wheel_width / 2 + 5, -self.car.height / 2 + wheel_height / 2 + 5)
-        self.filter = LowPass(self.car.x)
+
+        if config['filter'] == 'low_pass':
+            self.filter = LowPass(self.car.x)
+        elif config['filter'] == 'EKF':
+            self.filter = EKF(self.car.x)
+        else:
+            raise NotImplementedError(f"No filter named: {config['filter']}")
+
 
         self.prev_pos = deque(maxlen=100)
         self.filterd_pos = deque(maxlen=100)
