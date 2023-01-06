@@ -3,7 +3,7 @@ import pygame
 import time
 from rolling_average import RollingAverage
 import numba
-from common_functions import GREEN, BLACK, WHITE, BLUE, pos_to_pix
+from common_functions import GREEN, BLACK, WHITE, BLUE, pos_to_pix, load_config
 from Wheel import Wheel
 from polygon_math import *
 from car import Car
@@ -14,7 +14,8 @@ from measured_pos import MeasuredPos
 class ParkingSimulator:
 
     def __init__(self) -> None:
-        self.width, self.height = (720, 720)
+        config = load_config('config.yaml')
+        self.width, self.height = (config['screen_width'], config['screen_height'])
         self.screen = pygame.display.set_mode((self.width, self.height))
         pygame.font.init()
         self.my_font = pygame.font.SysFont(None, 30)
@@ -23,8 +24,8 @@ class ParkingSimulator:
         self.u1, self.u2 = 0, 0
 
         self.car = Car()
-        wheel_width = 30
-        wheel_height = 10
+        wheel_width = config['wheel_width']
+        wheel_height = config['wheel_height']
         self.wheel1 = Wheel(wheel_width, wheel_height, self.car.width - wheel_width / 2 - 5, -self.car.height / 2 + wheel_height / 2 + 5)
         self.wheel2 = Wheel(wheel_width, wheel_height, self.car.width - wheel_width / 2 - 5, self.car.height / 2 - wheel_height / 2 - 5)
         self.wheel3 = Wheel(wheel_width, wheel_height, wheel_width / 2 + 5, self.car.height / 2 - wheel_height / 2 - 5)
@@ -33,7 +34,7 @@ class ParkingSimulator:
 
         self.prev_pos = deque(maxlen=100)
         self.filterd_pos = deque(maxlen=100)
-        self.measurement_noise_std = 10
+        self.measurement_noise_std = config['measurement_noise_std']
         self.true_pos_color = (0, 0, 0)
         self.noisy_pos_color = (0, 0, 255)
         self.filtered_pos_color = (0, 255, 0)

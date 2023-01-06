@@ -1,0 +1,1 @@
+$x_{t+1} = x_t\alpha + x_{meas}(1-\alpha)$

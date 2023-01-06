@@ -6,13 +6,13 @@ import pygame
 
 
 class Car:
-
     def __init__(self) -> None:
+        config = load_config('config.yaml')
         # todo: Wrap these up in a config
-        self.L = 80
-        self.dt = 0.5
-        self.height = 50
-        self.width = self.L
+        self.L = config['car_l']
+        self.dt = config['dt']
+        self.height = config['car_height']
+        self.width = config['car_width']
 
         self.x = np.zeros([4, 1])
         self.u1 = 0

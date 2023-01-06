@@ -1,0 +1,13 @@
+car_l: 80
+car_height: 50
+car_width: 80
+
+wheel_width: 30
+wheel_height: 10
+
+screen_height: 720
+screen_width: 720
+
+measurement_noise_std: 10
+
+dt: 0.5
