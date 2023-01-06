@@ -10,6 +10,9 @@ screen_width: 720
 
 # filter: low_pass
 filter: EKF
-measurement_noise_std: 10
 
+measurement_noise_std: 10
 dt: 0.5
+
+u1_factor: 5
+u2_factor: 30

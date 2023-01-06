@@ -8,24 +8,25 @@ import pygame
 class Car:
     def __init__(self) -> None:
         config = load_config('config.yaml')
-        # todo: Wrap these up in a config
         self.L = config['car_l']
         self.dt = config['dt']
         self.height = config['car_height']
         self.width = config['car_width']
+        self.a = config['u1_factor']
+        self.b = config['u2_factor']
 
         self.x = np.zeros([4, 1])
         self.u1 = 0
         self.u2 = 0
         self.car_xs, self.car_ys = self.get_car_corners(self.x)
-        self.car_xs.append(self.car_xs[0]), self.car_ys.append( self.car_ys[0])  # Make the polygon closed
+        self.car_xs.append(self.car_xs[0]), self.car_ys.append(self.car_ys[0])  # Make the polygon closed
 
     def step(self, u1u2, map_xs, map_ys):
         # u1u2 is a vector of u1 and u2. u1 and u2 are values between -1 and 1 giving the percentage value between min and max
         if isinstance(u1u2, np.ndarray):  #remove?
             u1u2 = u1u2.reshape(-1)
 
-        self.u1, self.u2 = u1u2[0] * 5, u1u2[1] * np.deg2rad(30)  # Change 5 and 30 to be params
+        self.u1, self.u2 = u1u2[0] * self.a, u1u2[1] * np.deg2rad(self.b)
 
         # Update car state and check for collision
         x_temp = self.model(self.u1, self.u2, self.dt, self.L)
