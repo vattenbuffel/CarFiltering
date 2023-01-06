@@ -1,4 +1,3 @@
-from turtle import width
 import numpy as np
 from common_functions import BLACK
 import pygame
