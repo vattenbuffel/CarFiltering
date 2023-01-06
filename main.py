@@ -106,7 +106,8 @@ class ParkingSimulator:
 
         t_end = time.time()
         self.fps.update(1 / (t_end - self.t_start))
-        str_ = f"u1: {self.u1:.2f}, u2: {np.rad2deg(self.u2):.2f}, fps: {self.fps.get():.2f}"
+        noisy_pos_rms, filter_rms = rms(self.prev_pos, self.filterd_pos) if len(self.prev_pos) else (-1, -1)
+        str_ = f"u1: {self.u1:.2f}, u2: {np.rad2deg(self.u2):.2f}, fps: {self.fps.get():.2f}, filter_rms: {filter_rms:.2f}, noisy_pos_rms: {noisy_pos_rms:.2f}"
         text_surface = self.my_font.render(str_, True, BLACK)
         self.screen.blit(text_surface, (50, 50))
 
@@ -144,6 +145,22 @@ def draw_line(x0, y0, x1, y1, screen, screen_width, screen_height):
 def draw_lines(xs, ys, screen, screen_width, screen_height):
     for i in range(len(xs) - 1):
         draw_line(xs[i], ys[i], xs[i + 1], ys[i + 1], screen, screen_width, screen_height)
+
+def rms(prev_pos: [MeasuredPos], filtered_pos):
+    if len(prev_pos) == 0:
+        return
+
+    prev_err = 0
+    filtered_err = 0
+    for i in range(len(prev_pos)):
+        prev_err += np.linalg.norm(prev_pos[i].noisy_pos_get() - prev_pos[i].true_pos_get())**2
+        filtered_err += np.linalg.norm(filtered_pos[i].noisy_pos_get() - prev_pos[i].true_pos_get())**2
+    
+    prev_err /= len(prev_pos)
+    filtered_err /= len(prev_pos)
+
+    return prev_err**0.5, filtered_err**0.5
+
 
 
 if __name__ == '__main__':

@@ -8,7 +8,6 @@ class EKF(Filter):
         super().__init__(x)
         self.P = np.zeros((4,4))
 
-
         config = load_config('./extended_kalman/config.yaml')
         self.process_noise_std = config['process_noise_std']
         self.measurement_noise_std = config['measurement_noise_std']

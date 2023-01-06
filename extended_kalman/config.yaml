@@ -1,2 +1,2 @@
-process_noise_std: 4
+process_noise_std: 1
 measurement_noise_std: 10
