@@ -23,6 +23,8 @@ class ParkingSimulator:
         self.fps = RollingAverage(100)
         self.t_start = time.time()
         self.u1, self.u2 = 0, 0
+        self.u1_factor = config['u1_factor']
+        self.u2_factor = config['u2_factor']
 
         self.car = Car()
         wheel_width = config['wheel_width']
@@ -107,7 +109,7 @@ class ParkingSimulator:
         t_end = time.time()
         self.fps.update(1 / (t_end - self.t_start))
         noisy_pos_rms, filter_rms = rms(self.prev_pos, self.filterd_pos) if len(self.prev_pos) else (-1, -1)
-        str_ = f"u1: {self.u1:.2f}, u2: {np.rad2deg(self.u2):.2f}, fps: {self.fps.get():.2f}, filter_rms: {filter_rms:.2f}, noisy_pos_rms: {noisy_pos_rms:.2f}"
+        str_ = f"u1: {self.u1*self.u1_factor:.2f}, u2: {self.u2_factor*self.u2:.2f}, fps: {self.fps.get():.2f}, filter_rms: {filter_rms:.2f}, noisy_pos_rms: {noisy_pos_rms:.2f}"
         text_surface = self.my_font.render(str_, True, BLACK)
         self.screen.blit(text_surface, (50, 50))
 
