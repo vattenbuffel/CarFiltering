@@ -9,7 +9,7 @@ import pickle
 
 
 
-n_data = 10000
+n_data = 100000
 n_train = int(n_data*0.8)
 n_val = n_data - n_train
 

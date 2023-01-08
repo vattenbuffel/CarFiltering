@@ -1,0 +1,28 @@
+import torch
+from state_transition import StateTransition
+import pickle
+import numpy as np
+
+class MyIterAbleDataSet(torch.utils.data.IterableDataset):
+    def __init__(self, fp):
+        super(MyIterAbleDataSet).__init__()
+        self.data = [StateTransition]
+        with open(fp, 'rb') as f:
+            self.data = pickle.load(f)
+        
+
+    def __iter__(self):
+        assert torch.utils.data.get_worker_info().num_workers == 1,  "Only allow single-process data loading"
+
+        nn_xs = []
+        nn_ys = []
+
+        for trans in self.data:
+            x_old = trans.x_old
+            x_new_noisy = trans.x_new + trans.noise
+            nn_x = np.vstack((x_old, trans.u,x_new_noisy))
+
+            nn_xs.append(nn_x)
+            nn_ys.append(trans.x_new)
+
+        return iter([(nn_xs[i], nn_ys[i]) for i in range(len(self.data))])

@@ -19,18 +19,18 @@ class EKF(Filter):
         self.L = config['car_l']
 
     def F(self, u1, u2):
-        res =  np.array([ 
-             [1, 0, 0, 0], 
-             [0, 1, 0, 0], 
-             [0, 0, 1, 0], 
+        res =  np.array([
+             [1, 0, 0, 0],
+             [0, 1, 0, 0],
+             [0, 0, 1, 0],
              [0, 0, 0, 1]], dtype='float')
 
         theta = self.x[2][0]
 
-        res += np.array([ 
-             [0, 0, -sin(theta)*self.a*u1, 0], 
-             [0, 0, cos(theta)*self.b*u1, 0], 
-             [0, 0, 0, 0], 
+        res += np.array([
+             [0, 0, -sin(theta)*self.a*u1, 0],
+             [0, 0, cos(theta)*self.b*u2, 0],
+             [0, 0, 0, 0],
              [0, 0, 0, 0]]) * self.dt
 
         return res
@@ -71,8 +71,7 @@ class EKF(Filter):
         S = H @ self.P @ H.transpose() + np.diag(np.full(4, self.measurement_noise_std))
         K = self.P @ H.transpose() @ np.linalg.pinv(S)
         self.x = self.x + K@y
-        self.P = (np.diag(np.full(4, 1)) - K@H) @ self.P
-
+        self.P = self.P - K @ S @ K.transpose()
 
     def update(self, x_measurement, u1, u2):
         self.predict(u1, u2)
