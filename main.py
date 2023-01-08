@@ -7,8 +7,8 @@ from common_functions import GREEN, BLACK, WHITE, BLUE, pos_to_pix, load_config
 from Wheel import Wheel
 from polygon_math import *
 from car import Car
-from low_pass.low_pass import LowPass
-from extended_kalman.extended_kalman import EKF
+from filter.low_pass.low_pass import LowPass
+from filter.extended_kalman.extended_kalman import EKF
 from collections import deque
 from measured_pos import MeasuredPos
 

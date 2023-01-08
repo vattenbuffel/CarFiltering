@@ -1,4 +1,4 @@
-from filter import Filter
+from filter.filter import Filter
 from common_functions import load_config
 import numpy as np
 from numpy import sin, cos, tan
@@ -8,7 +8,7 @@ class EKF(Filter):
         super().__init__(x)
         self.P = np.zeros((4,4))
 
-        config = load_config('./extended_kalman/config.yaml')
+        config = load_config('./filter/extended_kalman/config.yaml')
         self.process_noise_std = config['process_noise_std']
         self.measurement_noise_std = config['measurement_noise_std']
 
