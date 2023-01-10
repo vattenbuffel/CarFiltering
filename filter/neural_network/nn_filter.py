@@ -1,6 +1,14 @@
-from filter.filter import Filter
+try:
+    from filter.filter import Filter
+except ModuleNotFoundError:
+    from filter import Filter
+
 import numpy as np
-from filter.neural_network.network import MyNetwork
+
+try:
+    from filter.neural_network.network import MyNetwork
+except ModuleNotFoundError:
+    from neural_network.network import MyNetwork
 import torch
 
 class NNFilter(Filter):

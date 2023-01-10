@@ -4,3 +4,6 @@ class StateTransition:
         self.u = u
         self.x_new = x_new
         self.noise = noise
+
+    def __str__(self):
+        return f"x_old: {self.x_old}, noise: {self.noise}, u: {self.u}, x_new: {self.x_new}"

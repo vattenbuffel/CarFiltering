@@ -1,4 +1,8 @@
-from filter.filter import Filter
+try:
+    from filter.filter import Filter
+except ModuleNotFoundError:
+    from filter import Filter
+    
 from common_functions import load_config
 
 class LowPass(Filter):

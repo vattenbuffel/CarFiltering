@@ -12,6 +12,8 @@ from filter.neural_network.nn_filter import NNFilter
 from collections import deque
 from measured_pos import MeasuredPos
 
+from filter.neural_network.state_transition import StateTransition
+
 class ParkingSimulator:
     def __init__(self) -> None:
         config = load_config('config.yaml')
@@ -45,6 +47,7 @@ class ParkingSimulator:
 
         self.prev_pos = deque(maxlen=100)
         self.filterd_pos = deque(maxlen=100)
+        self.state_trans = [StateTransition]
         self.measurement_noise_std = config['measurement_noise_std']
         self.true_pos_color = (0, 0, 0)
         self.noisy_pos_color = (0, 0, 255)
@@ -77,12 +80,16 @@ class ParkingSimulator:
     def step(self, u1u2):
         self.t_start = time.time()
         self.u1, self.u2 = u1u2
+        x_old = self.car.x
         self.car.step(u1u2, self.map_xs, self.map_ys)
+
 
         measurement_noise = np.random.normal(0, self.measurement_noise_std, (4,1))
         measured_pos = MeasuredPos(self.car.x, measurement_noise, u1u2, self.true_pos_color, self.noisy_pos_color)
         filtered_pos = self.filter.update(measured_pos.noisy_pos_get(), *u1u2)
         filtered_pos = MeasuredPos(filtered_pos, 0, u1u2, self.filtered_pos_color, self.filtered_pos_color)
+        state_trans = StateTransition(x_old, u1u2, self.car.x, measurement_noise)
+        self.state_trans.append(state_trans)
         if self.pos_save_counter == 5:
             self.prev_pos.append(measured_pos)
             self.filterd_pos.append(filtered_pos)
