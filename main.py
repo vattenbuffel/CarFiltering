@@ -2,18 +2,17 @@ import numpy as np
 import pygame
 import time
 from rolling_average import RollingAverage
-import numba
 from common_functions import GREEN, BLACK, WHITE, BLUE, pos_to_pix, load_config
 from Wheel import Wheel
 from polygon_math import *
 from car import Car
 from filter.low_pass.low_pass import LowPass
 from filter.extended_kalman.extended_kalman import EKF
+from filter.neural_network.nn_filter import NNFilter
 from collections import deque
 from measured_pos import MeasuredPos
 
 class ParkingSimulator:
-
     def __init__(self) -> None:
         config = load_config('config.yaml')
         self.width, self.height = (config['screen_width'], config['screen_height'])
@@ -38,6 +37,8 @@ class ParkingSimulator:
             self.filter = LowPass(self.car.x)
         elif config['filter'] == 'EKF':
             self.filter = EKF(self.car.x)
+        elif config['filter'] == 'nn':
+            self.filter = NNFilter(self.car.x)
         else:
             raise NotImplementedError(f"No filter named: {config['filter']}")
 
