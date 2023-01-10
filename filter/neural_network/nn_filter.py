@@ -11,22 +11,8 @@ class MyNetwork(nn.Module):
     def __init__(self, outputs=None, L2_penalty=0, learning_rate=0.01):
         super().__init__()
 
-        self.norm0 = nn.BatchNorm1d(10)
         self.layer0 = nn.Linear(10, 32)
-        self.dropout0 = nn.Dropout(p=0.2, inplace=False)
-
-        self.norm1 = nn.BatchNorm1d(32)
-        self.layer1 = nn.Linear(32, 32)
-        self.dropout1 = nn.Dropout(p=0.2, inplace=False)
-
-        self.norm2 = nn.BatchNorm1d(32)
-        self.layer2 = nn.Linear(32, 64)
-
-        self.layer3 = nn.Linear(64, 64)
-        self.layer4 = nn.Linear(64, 64)
-        self.layer5 = nn.Linear(64, 32)
-        self.layer6 = nn.Linear(32, 32)
-        self.layer7 = nn.Linear(32, 4)
+        self.layer1 = nn.Linear(32, 4)
 
         self.loss_fn = nn.MSELoss()
         self.optimizer = optim.Adam(self.parameters(), learning_rate, weight_decay=L2_penalty) # weight_decay is the alpha in weight penalty regularization
@@ -36,24 +22,9 @@ class MyNetwork(nn.Module):
     def forward(self, x):
         x = x.reshape(-1, 10).float()
 
-        # x = self.norm0(x)
         x = self.layer0(x)
-        # x = self.dropout0(x)
         x = relu(x)
-
-        # x = self.norm1(x)
         x = self.layer1(x)
-        # x = self.dropout1(x)
-        x = relu(x)
-
-        # x = self.norm2(x)
-        x = self.layer2(x)
-
-        x = self.layer3(x)
-        x = self.layer4(x)
-        x = self.layer5(x)
-        x = self.layer6(x)
-        x = self.layer7(x)
 
         return x
 
@@ -116,7 +87,7 @@ if __name__ == '__main__':
     batch_size = 64
     num_workers = 1
     learning_rate = 0.0005
-    n_epochs = 1000
+    n_epochs = 100
 
     network = MyNetwork()
 
