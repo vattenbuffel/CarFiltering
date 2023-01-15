@@ -45,7 +45,7 @@ class ParkingSimulator:
 
         self.prev_pos = deque(maxlen=10)
         self.filterd_pos = deque(maxlen=10)
-        self.state_trans = [StateTransition]
+        self.state_trans = []
         self.measurement_noise_std = config['measurement_noise_std']
         self.true_pos_color = (0, 0, 0)
         self.noisy_pos_color = (16, 52, 166)
@@ -85,7 +85,7 @@ class ParkingSimulator:
         measured_pos = MeasuredPos(self.car.x, measurement_noise, u1u2, self.true_pos_color, self.noisy_pos_color)
         filtered_pos = self.filter.update(measured_pos.noisy_pos_get(), *u1u2)
         filtered_pos = MeasuredPos(filtered_pos, 0, u1u2, self.filtered_pos_color, self.filtered_pos_color)
-        # state_trans = StateTransition(x_old, get_noise(self.measurement_noise_std), u1u2, self.car.x, measurement_noise)
+        # state_trans = StateTransition(x_old, get_noise(self.measurement_noise_std), np.array(u1u2).reshape(-1,1), self.car.x, measurement_noise)
         # self.state_trans.append(state_trans)
         if self.pos_save_counter == 10:
             self.prev_pos.append(measured_pos)

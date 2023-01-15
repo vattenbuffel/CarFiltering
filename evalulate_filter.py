@@ -25,7 +25,6 @@ filtered_pos_color = (0, 255, 0)
 
 with open("filter/eval_data", 'rb') as f:
     data = pickle.load(f)
-data.pop(0)
 x_init = data[0].x_old
 
 if config['filter'] == 'low_pass':

@@ -8,12 +8,16 @@ import time
 device = 'cpu'
 
 class MyNetwork(nn.Module):
-    def __init__(self, outputs=None, L2_penalty=0.1, learning_rate=0.01):
+    def __init__(self, outputs=None, L2_penalty=0.05, learning_rate=0.01):
         super().__init__()
 
         self.layer0 = nn.Linear(10, 32)
-        self.layer1 = nn.Linear(32, 32)
-        self.layer2 = nn.Linear(32, 4)
+        self.layer1 = nn.Linear(32, 64)
+        self.layer2 = nn.Linear(64, 128)
+        self.layer3 = nn.Linear(128, 128)
+        self.layer4 = nn.Linear(128, 64)
+        self.layer5 = nn.Linear(64, 32)
+        self.layer6 = nn.Linear(32, 4)
 
         self.loss_fn = nn.MSELoss()
         self.optimizer = optim.Adam(self.parameters(), learning_rate, weight_decay=L2_penalty) # weight_decay is the alpha in weight penalty regularization
@@ -28,6 +32,14 @@ class MyNetwork(nn.Module):
         x = self.layer1(x)
         x = relu(x)
         x = self.layer2(x)
+        x = relu(x)
+        x = self.layer3(x)
+        x = relu(x)
+        x = self.layer4(x)
+        x = relu(x)
+        x = self.layer5(x)
+        x = relu(x)
+        x = self.layer6(x)
 
         return x
 
@@ -89,10 +101,11 @@ if __name__ == '__main__':
     from dataloader import MyIterAbleDataSet
     batch_size = 64
     num_workers = 1
-    learning_rate = 0.0005
-    n_epochs = 100
+    learning_rate = 0.0001
+    L2_penalty = 0.1
+    n_epochs = 1000
 
-    network = MyNetwork()
+    network = MyNetwork(L2_penalty=L2_penalty, learning_rate=learning_rate)
 
     train_loader = DataLoader(dataset=MyIterAbleDataSet('filter/neural_network/train_data'), batch_size=batch_size, num_workers=num_workers)
     val_loader = DataLoader(dataset=MyIterAbleDataSet('filter/eval_data'), batch_size=batch_size, num_workers=num_workers)
