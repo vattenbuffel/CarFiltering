@@ -190,26 +190,26 @@ if __name__ == '__main__':
                 sys.exit(0)
             elif events.type == pygame.KEYDOWN:
                 if events.dict['unicode'] == 'w':
-                    u1 = 1
+                    u1 += 1
                 elif events.dict['unicode'] == 'a':
-                    u2 = 1
+                    u2 += 1
                 elif events.dict['unicode'] == 'd':
-                    u2 = -1
+                    u2 += -1
                 elif events.dict['unicode'] == 's':
-                    u1 = -1
+                    u1 += -1
                 elif events.dict['unicode'] == '\x1b':  # esc
                     exit(0)
                 elif events.dict['unicode'] == ' ':
                     env.reset()
             elif events.type == pygame.KEYUP:
                 if events.dict['unicode'] == 'w':
-                    u1 = 0
+                    u1 -= 1
                 elif events.dict['unicode'] == 'a':
-                    u2 = 0
+                    u2 -= 1
                 elif events.dict['unicode'] == 'd':
-                    u2 = 0
+                    u2 -= -1
                 elif events.dict['unicode'] == 's':
-                    u1 = 0
+                    u1 -= -1
 
         env.step((u1, u2))
         env.render()
