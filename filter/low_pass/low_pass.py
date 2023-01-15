@@ -3,7 +3,7 @@ try:
 except ModuleNotFoundError:
     from filter import Filter
     
-from common_functions import load_config
+from common_functions import load_config, map_angle
 
 class LowPass(Filter):
     def __init__(self, x):
@@ -16,5 +16,6 @@ class LowPass(Filter):
 
     def update(self, x_measurement, u1, u2):
         self.x = self.x*self.alpha + x_measurement*self.beta
+        self.x[2:] = map_angle(self.x[2:])
 
         return self.x

@@ -29,6 +29,8 @@ class Car:
         self.wheel3 = Wheel(wheel_width, wheel_height, wheel_width / 2 + 5, self.height / 2 - wheel_height / 2 - 5)
         self.wheel4 = Wheel(wheel_width, wheel_height, wheel_width / 2 + 5, -self.height / 2 + wheel_height / 2 + 5)
 
+        self.color = BLUE
+
     def step(self, u1u2, map_xs, map_ys):
         # u1u2 is a vector of u1 and u2. u1 and u2 are values between -1 and 1 giving the percentage value between min and max
         if isinstance(u1u2, np.ndarray):  #remove?
@@ -93,8 +95,8 @@ class Car:
         p2 = pos_to_pix(*p2, screen_width, screen_height)
         p3 = pos_to_pix(*p3, screen_width, screen_height)
 
-        pygame.draw.polygon(screen, BLUE + (alpha,), (p0, p1, p2, p3))
-        pygame.draw.lines(screen, BLACK + (alpha,), True, (p0, p1, p2, p3))
+        pygame.draw.polygon(screen, self.color + (alpha,), (p0, p1, p2, p3))
+        pygame.draw.lines(screen, self.color + (alpha,), True, (p0, p1, p2, p3))
 
         # Draw wheels
         x_ = self.x[0, 0]

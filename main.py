@@ -48,8 +48,8 @@ class ParkingSimulator:
         self.state_trans = [StateTransition]
         self.measurement_noise_std = config['measurement_noise_std']
         self.true_pos_color = (0, 0, 0)
-        self.noisy_pos_color = (0, 0, 255)
-        self.filtered_pos_color = (0, 255, 0)
+        self.noisy_pos_color = (16, 52, 166)
+        self.filtered_pos_color = (0, 78, 56)
         self.pos_save_counter = 0
 
         self.map_xs = [-350, 350, 350, 50, 50, -100, -100, -350, -350]
@@ -97,7 +97,6 @@ class ParkingSimulator:
     def render(self):
         self.screen.fill(WHITE)
 
-
         # Draw stuff
         draw_lines(self.map_xs, self.map_ys, self.screen, self.width, self.height)
         draw_pos(self.prev_pos, self.filterd_pos, self.screen, self.width, self.height)
@@ -121,18 +120,32 @@ def draw_pos(prev_pos: [MeasuredPos], filtered_pos: [MeasuredPos], screen, scree
     #     x = p.noisy_pos_get()
     #     draw_circle(x[0][0], x[1][0], p.noisy_pos_color, p.r, screen, screen_width, screen_height)
 
+    # for p in filtered_pos:
+    #     x = p.true_pos_get()
+    #     draw_circle(x[0][0], x[1][0], p.true_pos_color, p.r, screen, screen_width, screen_height)
+
     car = Car()
     alpha_surface = pygame.Surface((screen_width, screen_height), pygame.SRCALPHA)
     for i, p in enumerate(prev_pos):
-        car.x = p.noisy_pos_get()
         alpha = 255/(len(prev_pos) - i)
+
+        car.x = p.noisy_pos_get()
+        car.color = p.noisy_pos_color
+        car.render(alpha_surface, screen_width, screen_height, calculate_new_corners=True, alpha=alpha)
+
+        # car.x = p.true_pos_get()
+        # car.color = p.true_pos_color
+        # car.render(alpha_surface, screen_width, screen_height, calculate_new_corners=True, alpha=alpha)
+
+    for i, p in enumerate(filtered_pos):
+        alpha = 255/(len(prev_pos) - i)
+
+        car.x = p.true_pos_get()
+        car.color = p.true_pos_color
         car.render(alpha_surface, screen_width, screen_height, calculate_new_corners=True, alpha=alpha)
     
     screen.blit(alpha_surface, (0,0))
 
-    # for p in filtered_pos:
-    #     x = p.true_pos_get()
-    #     draw_circle(x[0][0], x[1][0], p.true_pos_color, p.r, screen, screen_width, screen_height)
 
 
 
