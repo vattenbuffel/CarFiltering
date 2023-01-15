@@ -3,7 +3,6 @@ import pygame
 import time
 from rolling_average import RollingAverage
 from common_functions import GREEN, BLACK, WHITE, BLUE, pos_to_pix, load_config
-from Wheel import Wheel
 from polygon_math import *
 from car import Car
 from filter.low_pass.low_pass import LowPass
@@ -33,12 +32,6 @@ class ParkingSimulator:
         self.u2_factor = config['u2_factor']
 
         self.car = Car()
-        wheel_width = config['wheel_width']
-        wheel_height = config['wheel_height']
-        self.wheel1 = Wheel(wheel_width, wheel_height, self.car.width - wheel_width / 2 - 5, -self.car.height / 2 + wheel_height / 2 + 5)
-        self.wheel2 = Wheel(wheel_width, wheel_height, self.car.width - wheel_width / 2 - 5, self.car.height / 2 - wheel_height / 2 - 5)
-        self.wheel3 = Wheel(wheel_width, wheel_height, wheel_width / 2 + 5, self.car.height / 2 - wheel_height / 2 - 5)
-        self.wheel4 = Wheel(wheel_width, wheel_height, wheel_width / 2 + 5, -self.car.height / 2 + wheel_height / 2 + 5)
 
         if config['filter'] == 'low_pass':
             self.filter = LowPass(self.car.x)
@@ -88,7 +81,6 @@ class ParkingSimulator:
         x_old = self.car.x
         self.car.step(u1u2, self.map_xs, self.map_ys)
 
-
         measurement_noise = get_noise(self.measurement_noise_std)
         measured_pos = MeasuredPos(self.car.x, measurement_noise, u1u2, self.true_pos_color, self.noisy_pos_color)
         filtered_pos = self.filter.update(measured_pos.noisy_pos_get(), *u1u2)
@@ -105,19 +97,11 @@ class ParkingSimulator:
     def render(self):
         self.screen.fill(WHITE)
 
-        x_ = self.car.x[0, 0]
-        y = self.car.x[1, 0]
-        theta = self.car.x[2, 0]
-        phi = self.car.x[3, 0]
 
         # Draw stuff
         draw_lines(self.map_xs, self.map_ys, self.screen, self.width, self.height)
         draw_pos(self.prev_pos, self.filterd_pos, self.screen, self.width, self.height)
         self.car.render(self.screen, self.width, self.height)
-        self.wheel1.draw(x_, y, theta, phi, self.screen)
-        self.wheel2.draw(x_, y, theta, phi, self.screen)
-        self.wheel3.draw(x_, y, theta, 0, self.screen)
-        self.wheel4.draw(x_, y, theta, 0, self.screen)
 
         t_end = time.time()
         self.fps.update(1 / (t_end - self.t_start))

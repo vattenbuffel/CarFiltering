@@ -3,6 +3,7 @@ from numpy import cos, sin, tan
 from polygon_math import *
 from common_functions import *
 import pygame
+from Wheel import Wheel
 
 
 class Car:
@@ -13,13 +14,20 @@ class Car:
         self.height = config['car_height']
         self.width = config['car_width']
         self.a = config['u1_factor']
-        self.b = config['u2_factor']
+        self.b = config['u2_factor'] # Deg
+        wheel_width = config['wheel_width']
+        wheel_height = config['wheel_height']
 
         self.x = np.zeros([4, 1])
         self.u1 = 0
         self.u2 = 0
         self.car_xs, self.car_ys = self.get_car_corners(self.x)
         self.car_xs.append(self.car_xs[0]), self.car_ys.append(self.car_ys[0])  # Make the polygon closed
+
+        self.wheel1 = Wheel(wheel_width, wheel_height, self.width - wheel_width / 2 - 5, -self.height / 2 + wheel_height / 2 + 5)
+        self.wheel2 = Wheel(wheel_width, wheel_height, self.width - wheel_width / 2 - 5, self.height / 2 - wheel_height / 2 - 5)
+        self.wheel3 = Wheel(wheel_width, wheel_height, wheel_width / 2 + 5, self.height / 2 - wheel_height / 2 - 5)
+        self.wheel4 = Wheel(wheel_width, wheel_height, wheel_width / 2 + 5, -self.height / 2 + wheel_height / 2 + 5)
 
     def step(self, u1u2, map_xs, map_ys):
         # u1u2 is a vector of u1 and u2. u1 and u2 are values between -1 and 1 giving the percentage value between min and max
@@ -74,6 +82,7 @@ class Car:
         if calculate_new_corners:
             self.car_xs, self.car_ys = self.get_car_corners(self.x)
 
+        # Draw car
         p0 = (self.car_xs[0], self.car_ys[0])
         p1 = (self.car_xs[1], self.car_ys[1])
         p2 = (self.car_xs[2], self.car_ys[2])
@@ -86,3 +95,14 @@ class Car:
 
         pygame.draw.polygon(screen, BLUE + (alpha, ), (p0, p1, p2, p3))
         pygame.draw.lines(screen, BLACK, True, (p0, p1, p2, p3))
+
+        # Draw wheels
+        x_ = self.x[0, 0]
+        y = self.x[1, 0]
+        theta = self.x[2, 0]
+        phi = self.x[3, 0]
+
+        self.wheel1.draw(x_, y, theta, phi, screen)
+        self.wheel2.draw(x_, y, theta, phi, screen)
+        self.wheel3.draw(x_, y, theta, 0, screen)
+        self.wheel4.draw(x_, y, theta, 0, screen)
