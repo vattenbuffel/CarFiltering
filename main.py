@@ -111,13 +111,13 @@ class ParkingSimulator:
         phi = self.car.x[3, 0]
 
         # Draw stuff
+        draw_lines(self.map_xs, self.map_ys, self.screen, self.width, self.height)
+        draw_pos(self.prev_pos, self.filterd_pos, self.screen, self.width, self.height)
         self.car.render(self.screen, self.width, self.height)
         self.wheel1.draw(x_, y, theta, phi, self.screen)
         self.wheel2.draw(x_, y, theta, phi, self.screen)
         self.wheel3.draw(x_, y, theta, 0, self.screen)
         self.wheel4.draw(x_, y, theta, 0, self.screen)
-        draw_lines(self.map_xs, self.map_ys, self.screen, self.width, self.height)
-        draw_pos(self.prev_pos, self.filterd_pos, self.screen, self.width, self.height)
 
         t_end = time.time()
         self.fps.update(1 / (t_end - self.t_start))
@@ -130,19 +130,23 @@ class ParkingSimulator:
 
 
 def draw_pos(prev_pos: [MeasuredPos], filtered_pos: [MeasuredPos], screen, screen_width, screen_height):
-    for p in prev_pos:
-        x = p.true_pos_get()
-        draw_circle(x[0][0], x[1][0], p.true_pos_color, p.r, screen, screen_width, screen_height)
-        # draw_arrow(measured_pos.noisy_pos_get()[:3])
+    # for p in prev_pos:
+    #     x = p.true_pos_get()
+    #     draw_circle(x[0][0], x[1][0], p.true_pos_color, p.r, screen, screen_width, screen_height)
 
+    #     x = p.noisy_pos_get()
+    #     draw_circle(x[0][0], x[1][0], p.noisy_pos_color, p.r, screen, screen_width, screen_height)
+
+    car = Car()
+    for i, p in enumerate(prev_pos):
         x = p.noisy_pos_get()
-        draw_circle(x[0][0], x[1][0], p.noisy_pos_color, p.r, screen, screen_width, screen_height)
-        # draw_arrow(measured_pos.noisy_pos_get()[:3])
+        car.x = x
+        car.render(screen, screen_width, screen_height, calculate_new_corners=True, alpha=127)
+        # draw_circle(x[0][0], x[1][0], p.noisy_pos_color, p.r, screen, screen_width, screen_height)
 
-    for p in filtered_pos:
-        x = p.true_pos_get()
-        draw_circle(x[0][0], x[1][0], p.true_pos_color, p.r, screen, screen_width, screen_height)
-        # draw_arrow(measured_pos.noisy_pos_get()[:3])
+    # for p in filtered_pos:
+    #     x = p.true_pos_get()
+    #     draw_circle(x[0][0], x[1][0], p.true_pos_color, p.r, screen, screen_width, screen_height)
 
 
 

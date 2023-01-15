@@ -69,7 +69,11 @@ class Car:
 
         return [p0[0] + x, p1[0] + x, p2[0] + x, p3[0] + x], [p0[1] + y, p1[1] + y, p2[1] + y, p3[1] + y]
 
-    def render(self, screen, screen_width, screen_height):
+    def render(self, screen, screen_width, screen_height, calculate_new_corners=False, alpha=0):
+        # Calculate new corners is needed if step function hasn't been called
+        if calculate_new_corners:
+            self.car_xs, self.car_ys = self.get_car_corners(self.x)
+
         p0 = (self.car_xs[0], self.car_ys[0])
         p1 = (self.car_xs[1], self.car_ys[1])
         p2 = (self.car_xs[2], self.car_ys[2])
@@ -80,4 +84,5 @@ class Car:
         p2 = pos_to_pix(*p2, screen_width, screen_height)
         p3 = pos_to_pix(*p3, screen_width, screen_height)
 
-        pygame.draw.polygon(screen, BLUE, (p0, p1, p2, p3))
+        pygame.draw.polygon(screen, BLUE + (alpha, ), (p0, p1, p2, p3))
+        pygame.draw.lines(screen, BLACK, True, (p0, p1, p2, p3))
