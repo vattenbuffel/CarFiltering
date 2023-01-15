@@ -95,7 +95,7 @@ if __name__ == '__main__':
     network = MyNetwork()
 
     train_loader = DataLoader(dataset=MyIterAbleDataSet('filter/neural_network/train_data'), batch_size=batch_size, num_workers=num_workers)
-    val_loader = DataLoader(dataset=MyIterAbleDataSet('filter/neural_network/val_data'), batch_size=batch_size, num_workers=num_workers)
+    val_loader = DataLoader(dataset=MyIterAbleDataSet('filter/eval_data'), batch_size=batch_size, num_workers=num_workers)
 
     dict_of_loss_and_accuracy = {'training_loss':[], 'validation_loss':[], 'training_accuracy':[], 'validation_accuracy':[], 'train_time':[]}
     network.train_(train_loader, val_loader, n_epochs, dict_of_loss_and_accuracy=dict_of_loss_and_accuracy)

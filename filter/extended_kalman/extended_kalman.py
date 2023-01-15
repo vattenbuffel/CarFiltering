@@ -3,7 +3,7 @@ try:
 except ModuleNotFoundError:
     from filter import Filter
     
-from common_functions import load_config
+from common_functions import load_config, map_angle
 import numpy as np
 from numpy import sin, cos, tan
 
@@ -81,4 +81,5 @@ class EKF(Filter):
     def update(self, x_measurement, u1, u2):
         self.predict(u1, u2)
         self.correct(x_measurement)
+        self.x[2:] = map_angle(self.x[2:])
         return self.x

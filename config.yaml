@@ -8,9 +8,9 @@ wheel_height: 10
 screen_height: 720
 screen_width: 720
 
-filter: low_pass
+# filter: low_pass
 # filter: EKF
-# filter: nn
+filter: nn
 
 measurement_noise_std: 20
 dt: 0.5
