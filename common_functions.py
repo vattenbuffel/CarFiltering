@@ -1,4 +1,10 @@
 import yaml
+import numpy as np
+
+def map_angle(ang):
+    # Angle can be in (-inf, inf). Map it to [-pi, pi]
+    x, y = np.cos(ang), np.sin(ang)
+    return np.arctan2(y, x) 
 
 def pos_to_pix(x, y, screen_width, screen_height):
     x += screen_width/2

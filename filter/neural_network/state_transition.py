@@ -1,5 +1,6 @@
 class StateTransition:
     def __init__(self, x_old, noise_old, u, x_new, noise_new):
+        # Theta in x is in rad
         self.x_old = x_old
         self.noise_old = noise_old # Used for training nn so it doesn't get the true state as input
         self.u = u

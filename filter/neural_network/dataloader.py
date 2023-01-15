@@ -1,6 +1,10 @@
 import torch
 from state_transition import StateTransition
 import pickle
+import os 
+import sys
+sys.path.append(os.path.join(sys.path[0], '../../'))
+from common_functions import map_angle
 import numpy as np
 
 class MyIterAbleDataSet(torch.utils.data.IterableDataset):
@@ -19,7 +23,11 @@ class MyIterAbleDataSet(torch.utils.data.IterableDataset):
 
         for trans in self.data:
             x_old = trans.x_old + trans.noise_old
+            x_old[2:] = map_angle(x_old[2:])
+
             x_new = trans.x_new + trans.noise_new
+            x_new[2:] = map_angle(x_new[2:])
+
             nn_x = np.vstack((x_old, trans.u, x_new))
 
             nn_xs.append(nn_x)

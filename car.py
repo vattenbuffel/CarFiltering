@@ -35,6 +35,7 @@ class Car:
         if ([], []) == get_polygon_intersection_points(car_xs_temp, car_ys_temp, map_xs, map_ys):
             self.x = x_temp
             self.car_xs, self.car_ys = car_xs_temp, car_ys_temp
+            self.x[2:] = map_angle(self.x[2:])
 
     # @numba.njit
     def model(self, u1, u2, dt, L):

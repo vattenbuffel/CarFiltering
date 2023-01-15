@@ -17,4 +17,6 @@ class MeasuredPos:
         return self.x
 
     def noisy_pos_get(self):
-        return self.x + self.x_noise
+        x = self.x + self.x_noise
+        x[2:] = map_angle(x[2:])
+        return x

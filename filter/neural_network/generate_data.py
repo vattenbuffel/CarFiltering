@@ -4,7 +4,7 @@ import sys
 sys.path.append(os.path.join(sys.path[0], '../../'))
 from state_transition import StateTransition
 from car import Car
-from common_functions import load_config
+from common_functions import load_config, map_angle
 import pickle
 
 
@@ -22,8 +22,8 @@ def random_pos(n_data):
     x_min = -1000
     y_max = 1000
     y_min = -1000
-    theta_max = 2*np.pi
-    theta_min = 0
+    theta_max = np.pi
+    theta_min = -np.pi
     phi_max = np.deg2rad(config['u2_factor'])
     phi_min = np.deg2rad(-config['u2_factor'])
 
@@ -36,7 +36,9 @@ def random_pos(n_data):
     return np.array([x, y, theta, phi])
 
 def get_noise(x):
-    return np.random.normal(0, config['measurement_noise_std'], x.shape)
+    noise = np.random.normal(0, config['measurement_noise_std'], x.shape)
+    noise[2:, :] = np.deg2rad(noise[2:, :])
+    return noise
 
 def random_u(n_data):
     u1_max = config['u1_factor']
@@ -64,6 +66,7 @@ for i in range(n_train):
     car.x = xs[:, i].reshape(-1, 1)
     u1, u2 = us[0, i], us[1, i]
     x_new = car.model(u1, u2, dt, L)
+    x_new[2:] = map_angle(x_new[2:])
 
     state_transition = StateTransition(xs[:, i].reshape(-1,1), old_noise[:, i].reshape(-1, 1), us[:, 1].reshape(-1, 1), x_new, new_noise[:, i].reshape(-1,1))
     train_pos.append(state_transition)

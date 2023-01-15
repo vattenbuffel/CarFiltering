@@ -2,7 +2,7 @@ import sys
 import os
 sys.path.insert(1, os.path.join(sys.path[0], '..'))
 sys.path.insert(1, os.path.join(sys.path[0], '../..'))
-from common_functions import load_config
+from common_functions import load_config, map_angle
 import matplotlib.pyplot as plt
 import pickle
 import numpy as np
@@ -56,10 +56,34 @@ xs_measured = np.array(xs_measured)[::PLOT_EVERY]
 xs_filtered = np.array(xs_filtered)[::PLOT_EVERY]
 t = np.linspace(0, len(xs_true)*dt, len(xs_true))
 
+plt.figure(1)
 plt.scatter(t, xs_true[:,0], label='True', marker='o', alpha=0.6)
 plt.scatter(t, xs_measured[:,0], label='Measured', marker='x', alpha=0.6)
 plt.scatter(t, xs_filtered[:,0], label='Filtered', marker=',', alpha=0.6)
 plt.title('x')
 plt.legend()
+
+plt.figure(2)
+plt.scatter(t, xs_true[:,1], label='True', marker='o', alpha=0.6)
+plt.scatter(t, xs_measured[:,1], label='Measured', marker='x', alpha=0.6)
+plt.scatter(t, xs_filtered[:,1], label='Filtered', marker=',', alpha=0.6)
+plt.title('y')
+plt.legend()
+
+plt.figure(3)
+plt.scatter(t, np.rad2deg(map_angle(xs_true[:,2])), label='True', marker='o', alpha=0.6)
+plt.scatter(t, np.rad2deg(map_angle(xs_measured[:,2])), label='Measured', marker='x', alpha=0.6)
+plt.scatter(t, np.rad2deg(map_angle(xs_filtered[:,2])), label='Filtered', marker=',', alpha=0.6)
+plt.title('\theta')
+plt.legend()
+
+plt.figure(4)
+plt.scatter(t, np.rad2deg(map_angle(xs_true[:,3])), label='True', marker='o', alpha=0.6)
+plt.scatter(t, np.rad2deg(map_angle(xs_measured[:,3])), label='Measured', marker='x', alpha=0.6)
+plt.scatter(t, np.rad2deg(map_angle(xs_filtered[:,3])), label='Filtered', marker=',', alpha=0.6)
+plt.title('\phi')
+plt.legend()
+
+
 plt.show()
 
