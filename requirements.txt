@@ -1,6 +1,0 @@
-numba
-numpy
-pygame
-pyyaml
-matplotlib
-torch
