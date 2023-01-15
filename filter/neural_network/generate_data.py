@@ -58,13 +58,14 @@ L = config['car_l']
 
 xs = random_pos(n_train)
 us = random_u(n_train)
-noise = get_noise(xs)
+old_noise = get_noise(xs)
+new_noise = get_noise(xs)
 for i in range(n_train):
     car.x = xs[:, i].reshape(-1, 1)
     u1, u2 = us[0, i], us[1, i]
     x_new = car.model(u1, u2, dt, L)
 
-    state_transition = StateTransition(xs[:, i].reshape(-1,1), us[:, 1].reshape(-1, 1), x_new, noise[:, i].reshape(-1,1))
+    state_transition = StateTransition(xs[:, i].reshape(-1,1), old_noise[:, i].reshape(-1, 1), us[:, 1].reshape(-1, 1), x_new, new_noise[:, i].reshape(-1,1))
     train_pos.append(state_transition)
 
 for i in range(n_val):
@@ -72,7 +73,7 @@ for i in range(n_val):
     u1, u2 = us[0, i], us[1, i]
     x_new = car.model(u1, u2, dt, L)
 
-    state_transition = StateTransition(xs[:, i].reshape(-1,1), us[:, 1].reshape(-1, 1), x_new, noise[:, i].reshape(-1,1))
+    state_transition = StateTransition(xs[:, i].reshape(-1,1), old_noise[:, i].reshape(-1, 1), us[:, 1].reshape(-1, 1), x_new, new_noise[:, i].reshape(-1,1))
     val_pos.append(state_transition)
 
 with open("filter/neural_network/train_data", 'wb') as f:

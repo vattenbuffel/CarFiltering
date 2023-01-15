@@ -12,7 +12,8 @@ class MyNetwork(nn.Module):
         super().__init__()
 
         self.layer0 = nn.Linear(10, 32)
-        self.layer1 = nn.Linear(32, 4)
+        self.layer1 = nn.Linear(32, 32)
+        self.layer2 = nn.Linear(32, 4)
 
         self.loss_fn = nn.MSELoss()
         self.optimizer = optim.Adam(self.parameters(), learning_rate, weight_decay=L2_penalty) # weight_decay is the alpha in weight penalty regularization
@@ -25,6 +26,8 @@ class MyNetwork(nn.Module):
         x = self.layer0(x)
         x = relu(x)
         x = self.layer1(x)
+        x = relu(x)
+        x = self.layer2(x)
 
         return x
 
@@ -62,7 +65,7 @@ class MyNetwork(nn.Module):
                 dict_of_loss_and_accuracy['validation_loss'].append(val_avg_loss)
                 dict_of_loss_and_accuracy['train_time'].append(train_time)
                 if save_best and lowest_val_loss > val_avg_loss:
-                    torch.save(self.state_dict(), "/filter/neural_network/network")
+                    torch.save(self.state_dict(), "filter/neural_network/network")
 
             print("After epoch: {}\tVal_avg_loss: {:.3f}\tTrain_avg_loss: {:.3f}\ttrain_time: {:.2f} s".format(i, val_avg_loss, train_avg_loss, train_time))
 

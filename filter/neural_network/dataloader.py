@@ -18,9 +18,9 @@ class MyIterAbleDataSet(torch.utils.data.IterableDataset):
         nn_ys = []
 
         for trans in self.data:
-            x_old = trans.x_old
-            x_new_noisy = trans.x_new + trans.noise
-            nn_x = np.vstack((x_old, trans.u,x_new_noisy))
+            x_old = trans.x_old + trans.noise_old
+            x_new = trans.x_new + trans.noise_new
+            nn_x = np.vstack((x_old, trans.u, x_new))
 
             nn_xs.append(nn_x)
             nn_ys.append(trans.x_new)

@@ -88,8 +88,8 @@ class ParkingSimulator:
         measured_pos = MeasuredPos(self.car.x, measurement_noise, u1u2, self.true_pos_color, self.noisy_pos_color)
         filtered_pos = self.filter.update(measured_pos.noisy_pos_get(), *u1u2)
         filtered_pos = MeasuredPos(filtered_pos, 0, u1u2, self.filtered_pos_color, self.filtered_pos_color)
-        state_trans = StateTransition(x_old, u1u2, self.car.x, measurement_noise)
-        self.state_trans.append(state_trans)
+        # state_trans = StateTransition(x_old, u1u2, self.car.x, measurement_noise)
+        # self.state_trans.append(state_trans)
         if self.pos_save_counter == 5:
             self.prev_pos.append(measured_pos)
             self.filterd_pos.append(filtered_pos)

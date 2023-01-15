@@ -1,5 +1,4 @@
 import matplotlib.pyplot as plt
-import numba
 import numpy as np
 from itertools import permutations
 
