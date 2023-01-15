@@ -11,8 +11,11 @@ from filter.low_pass.low_pass import LowPass
 from filter.extended_kalman.extended_kalman import EKF
 from filter.neural_network.nn_filter import NNFilter
 
+PLOT_EVERY = 10
+
 config = load_config('config.yaml')
 
+dt = config['dt']
 a = config['u1_factor']
 b = config['u2_factor']
 measurement_noise_std = config['measurement_noise_std']
@@ -48,13 +51,14 @@ for d in data:
     x_filter = filter.update(x_meas, *d.u)
     xs_filtered.append(x_filter)
 
-xs_true = np.array(xs_true)
-xs_measured = np.array(xs_measured)
-xs_filtered = np.array(xs_filtered)
+xs_true = np.array(xs_true)[::PLOT_EVERY]
+xs_measured = np.array(xs_measured)[::PLOT_EVERY]
+xs_filtered = np.array(xs_filtered)[::PLOT_EVERY]
+t = np.linspace(0, len(xs_true)*dt, len(xs_true))
 
-plt.plot(range(len(xs_true)), xs_true[:,0], label='True')
-plt.plot(range(len(xs_measured)), xs_measured[:,0], label='Measured')
-plt.plot(range(len(xs_filtered)), xs_filtered[:,0], label='Filtered')
+plt.scatter(t, xs_true[:,0], label='True', marker='o', alpha=0.6)
+plt.scatter(t, xs_measured[:,0], label='Measured', marker='x', alpha=0.6)
+plt.scatter(t, xs_filtered[:,0], label='Filtered', marker=',', alpha=0.6)
 plt.title('x')
 plt.legend()
 plt.show()
