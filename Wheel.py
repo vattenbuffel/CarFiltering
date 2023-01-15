@@ -14,7 +14,7 @@ class Wheel:
         self.d_offset_to_car = (x_offset_to_car**2 + y_offset_to_car**2)**0.5
         self.alpha_offset_to_car = np.arctan2(y_offset_to_car, x_offset_to_car)
 
-    def draw(self, car_x, car_y, theta, phi, screen):
+    def draw(self, car_x, car_y, theta, phi, screen, alpha_=255):
         r = self.r
         alpha = self.alpha
 
@@ -34,4 +34,4 @@ class Wheel:
         p2 = add_xy_and_offset(p2, car_x+x_offset, car_y+y_offset, width, height)
         p3 = add_xy_and_offset(p3, car_x+x_offset, car_y+y_offset, width, height)
 
-        pygame.draw.polygon(screen, BLACK, (p0, p1, p2, p3))
+        pygame.draw.polygon(screen, BLACK+(alpha_,), (p0, p1, p2, p3))

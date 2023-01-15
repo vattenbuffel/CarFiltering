@@ -93,8 +93,8 @@ class Car:
         p2 = pos_to_pix(*p2, screen_width, screen_height)
         p3 = pos_to_pix(*p3, screen_width, screen_height)
 
-        pygame.draw.polygon(screen, BLUE + (alpha, ), (p0, p1, p2, p3))
-        pygame.draw.lines(screen, BLACK, True, (p0, p1, p2, p3))
+        pygame.draw.polygon(screen, BLUE + (alpha,), (p0, p1, p2, p3))
+        pygame.draw.lines(screen, BLACK + (alpha,), True, (p0, p1, p2, p3))
 
         # Draw wheels
         x_ = self.x[0, 0]
@@ -102,7 +102,7 @@ class Car:
         theta = self.x[2, 0]
         phi = self.x[3, 0]
 
-        self.wheel1.draw(x_, y, theta, phi, screen)
-        self.wheel2.draw(x_, y, theta, phi, screen)
-        self.wheel3.draw(x_, y, theta, 0, screen)
-        self.wheel4.draw(x_, y, theta, 0, screen)
+        self.wheel1.draw(x_, y, theta, phi, screen, alpha_=alpha)
+        self.wheel2.draw(x_, y, theta, phi, screen, alpha_=alpha)
+        self.wheel3.draw(x_, y, theta, 0, screen, alpha_=alpha)
+        self.wheel4.draw(x_, y, theta, 0, screen, alpha_=alpha)

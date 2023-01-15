@@ -43,8 +43,8 @@ class ParkingSimulator:
             raise NotImplementedError(f"No filter named: {config['filter']}")
 
 
-        self.prev_pos = deque(maxlen=100)
-        self.filterd_pos = deque(maxlen=100)
+        self.prev_pos = deque(maxlen=10)
+        self.filterd_pos = deque(maxlen=10)
         self.state_trans = [StateTransition]
         self.measurement_noise_std = config['measurement_noise_std']
         self.true_pos_color = (0, 0, 0)
@@ -87,7 +87,7 @@ class ParkingSimulator:
         filtered_pos = MeasuredPos(filtered_pos, 0, u1u2, self.filtered_pos_color, self.filtered_pos_color)
         # state_trans = StateTransition(x_old, get_noise(self.measurement_noise_std), u1u2, self.car.x, measurement_noise)
         # self.state_trans.append(state_trans)
-        if self.pos_save_counter == 5:
+        if self.pos_save_counter == 10:
             self.prev_pos.append(measured_pos)
             self.filterd_pos.append(filtered_pos)
             self.pos_save_counter = 0
@@ -122,11 +122,13 @@ def draw_pos(prev_pos: [MeasuredPos], filtered_pos: [MeasuredPos], screen, scree
     #     draw_circle(x[0][0], x[1][0], p.noisy_pos_color, p.r, screen, screen_width, screen_height)
 
     car = Car()
+    alpha_surface = pygame.Surface((screen_width, screen_height), pygame.SRCALPHA)
     for i, p in enumerate(prev_pos):
-        x = p.noisy_pos_get()
-        car.x = x
-        car.render(screen, screen_width, screen_height, calculate_new_corners=True, alpha=127)
-        # draw_circle(x[0][0], x[1][0], p.noisy_pos_color, p.r, screen, screen_width, screen_height)
+        car.x = p.noisy_pos_get()
+        alpha = 255/(len(prev_pos) - i)
+        car.render(alpha_surface, screen_width, screen_height, calculate_new_corners=True, alpha=alpha)
+    
+    screen.blit(alpha_surface, (0,0))
 
     # for p in filtered_pos:
     #     x = p.true_pos_get()
