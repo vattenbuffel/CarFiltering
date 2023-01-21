@@ -35,8 +35,8 @@ def random_pos(n_data):
 
     return np.array([x, y, theta, phi])
 
-def get_noise(x):
-    noise = np.random.normal(0, config['measurement_noise_std'], x.shape)
+def get_noise(x, std):
+    noise = np.random.normal(0, std, x.shape)
     noise[2:, :] = np.deg2rad(noise[2:, :])
     return noise
 
@@ -60,8 +60,8 @@ L = config['car_l']
 
 xs = random_pos(n_train)
 us = random_u(n_train)
-old_noise = get_noise(xs)
-new_noise = get_noise(xs)
+old_noise = get_noise(xs, config['measurement_noise_std']/2) # want the nn to trust old pos more than new pos
+new_noise = get_noise(xs, config['measurement_noise_std'])
 for i in range(n_train):
     car.x = xs[:, i].reshape(-1, 1)
     u1, u2 = us[0, i], us[1, i]

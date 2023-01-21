@@ -23,14 +23,14 @@ class MyIterAbleDataSet(torch.utils.data.IterableDataset):
 
         for trans in self.data:
             x_old = trans.x_old + trans.noise_old
-            x_old[2:] = map_angle(x_old[2:])
 
             x_new = trans.x_new + trans.noise_new
-            x_new[2:] = map_angle(x_new[2:])
 
             nn_x = np.vstack((x_old, trans.u, x_new))
 
             nn_xs.append(nn_x)
-            nn_ys.append(trans.x_new)
+
+            nn_y = trans.x_new
+            nn_ys.append(nn_y)
 
         return iter([(nn_xs[i], nn_ys[i]) for i in range(len(self.data))])

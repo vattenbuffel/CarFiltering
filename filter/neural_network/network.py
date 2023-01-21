@@ -12,12 +12,9 @@ class MyNetwork(nn.Module):
         super().__init__()
 
         self.layer0 = nn.Linear(10, 32)
-        self.layer1 = nn.Linear(32, 64)
-        self.layer2 = nn.Linear(64, 128)
-        self.layer3 = nn.Linear(128, 128)
-        self.layer4 = nn.Linear(128, 64)
-        self.layer5 = nn.Linear(64, 32)
-        self.layer6 = nn.Linear(32, 4)
+        self.layer1 = nn.Linear(32, 32)
+        self.layer2 = nn.Linear(32, 32)
+        self.layer3 = nn.Linear(32, 4)
 
         self.loss_fn = nn.MSELoss()
         self.optimizer = optim.Adam(self.parameters(), learning_rate, weight_decay=L2_penalty) # weight_decay is the alpha in weight penalty regularization
@@ -34,17 +31,12 @@ class MyNetwork(nn.Module):
         x = self.layer2(x)
         x = relu(x)
         x = self.layer3(x)
-        x = relu(x)
-        x = self.layer4(x)
-        x = relu(x)
-        x = self.layer5(x)
-        x = relu(x)
-        x = self.layer6(x)
 
         return x
 
     def backward(self, predicted, truth):
-        loss = self.loss_fn(predicted, truth)
+        scale_tensor = torch.tensor([1,1,10000,10000]).to(device)
+        loss = self.loss_fn(predicted * scale_tensor  , truth * scale_tensor)
         loss.backward()
         self.optimizer.step()
         self.optimizer.zero_grad()
@@ -60,7 +52,7 @@ class MyNetwork(nn.Module):
             self.train()
             for x,y in train_loader:
                 train_n += len(x)
-                y = y.float().reshape(-1, 4).to(device)
+                y = y.float().reshape(-1, y.shape[1]).to(device)
                 pred = self.forward(x.to(device))
                 loss = self.backward(pred, y)
 
@@ -77,6 +69,8 @@ class MyNetwork(nn.Module):
                 dict_of_loss_and_accuracy['validation_loss'].append(val_avg_loss)
                 dict_of_loss_and_accuracy['train_time'].append(train_time)
                 if save_best and lowest_val_loss > val_avg_loss:
+                    lowest_val_loss = val_avg_loss
+                    print("Saved new network")
                     torch.save(self.state_dict(), "filter/neural_network/network")
 
             print("After epoch: {}\tVal_avg_loss: {:.3f}\tTrain_avg_loss: {:.3f}\ttrain_time: {:.2f} s".format(i, val_avg_loss, train_avg_loss, train_time))
@@ -87,7 +81,7 @@ class MyNetwork(nn.Module):
         with torch.no_grad():
             for x, y in val_data_loader:
                 n_data += len(x)
-                y = y.float().reshape(-1, 4).to(device)
+                y = y.float().reshape(-1, y.shape[1]).to(device)
                 pred = self(x.to(device)) 
                 loss = self.loss_fn(pred, y)
                 losses.append(loss.item())
@@ -103,7 +97,7 @@ if __name__ == '__main__':
     num_workers = 1
     learning_rate = 0.0001
     L2_penalty = 0.1
-    n_epochs = 1000
+    n_epochs = 2000
 
     network = MyNetwork(L2_penalty=L2_penalty, learning_rate=learning_rate)
 
